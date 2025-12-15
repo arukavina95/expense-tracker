@@ -1,0 +1,385 @@
+/* ================================
+   APP LAYOUT
+   ================================ */
+
+.app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+/* ================================
+   NAVBAR
+   ================================ */
+
+.nav-top {
+  padding: 8px 0;
+}
+
+.nav-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+
+.brand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logo-mark {
+  font-size: 20px;
+  background: linear-gradient(90deg, #5563f7, #61d4a9);
+  color: transparent;
+}
+
+.brand-text {
+  font-weight: 700;
+}
+
+.nav-links {
+  display: none;
+  gap: 12px;
+}
+
+.nav-links button {
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: 10px;
+  color: var(--muted);
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.nav-links button.active {
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 6px;
+}
+
+.nav-actions button {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  box-shadow: none;
+}
+
+/* ================================
+   MAIN
+   ================================ */
+
+.app-main {
+  width: 100%;
+  padding-bottom: 80px;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ================================
+   CARDS
+   ================================ */
+
+.card-panel {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow-1);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+/* ================================
+   SUMMARY
+   ================================ */
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.summary-title {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.summary-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+/* ================================
+   CHART
+   ================================ */
+
+.chart-card {
+  padding: 16px;
+}
+
+.chart-wrap {
+  height: 160px;              /* ⬅ manja visina */
+  border-radius: 10px;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.04),
+    rgba(15, 23, 42, 0)
+  );
+}
+/* ================================
+   TABLE
+   ================================ */
+
+.recent-card table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.recent-card th,
+.recent-card td {
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.recent-card tbody tr td {
+  background: var(--surface);
+}
+
+.recent-card tbody tr:hover td {
+  box-shadow: var(--shadow-2);
+}
+
+/* ================================
+   FORM
+   ================================ */
+
+.expense-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.expense-form input,
+.expense-form select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+/* ================================
+   BOTTOM NAV (MOBILE)
+   ================================ */
+
+.nav-bottom {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: var(--shadow-1);
+}
+
+.nav-bottom button {
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+}
+
+.nav-bottom button.active {
+  color: var(--accent);
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (min-width: 800px) {
+  .nav-links { display: flex; }
+  .nav-bottom { display: none; }
+}
+
+@media (max-width: 800px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- Dashboard polish ---- */
+
+.section {
+  margin-top: 20px;
+}
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.chart-title {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.table-wrap {
+  margin-top: 12px;
+}
+
+.recent-card thead th {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.recent-card td.amount {
+  font-weight: 700;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 800px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.budget-bar {
+  height: 8px;
+  background: #eef2ff;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.budget-fill {
+  height: 100%;
+  background: #4f46e5;
+  transition: width 200ms ease;
+}
+
+.budget-fill.warn {
+  background: #f97316;
+}
+
+.budget-fill.danger {
+  background: #e11d48;
+}
+/* ==============================
+   AUTH / LOGIN – FIXED
+   ============================== */
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 32px;
+  padding: 48px;
+  align-items: center;
+  background: var(--bg);
+}
+
+.auth-hero {
+  background: linear-gradient(
+    180deg,
+    rgba(79, 70, 229, 0.08),
+    rgba(99, 102, 241, 0.02)
+  );
+  border-radius: 18px;
+  padding: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-inner {
+  max-width: 420px;
+}
+
+.hero-tag {
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  background: linear-gradient(90deg, #5563f7, #61d4a9);
+  color: transparent;
+}
+
+.auth-card {
+  width: 100%;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-form input {
+  padding: 22px 14px;
+  border-radius: 10px;
+  border: 3px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.auth-foot {
+  margin-top: 6px;
+  font-size: 0.8rem;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+
+  .auth-hero {
+    padding: 32px;
+  }
+}
+.settings-page .card-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-actions {
+  margin-top: 12px;
+}
+
+.settings-page input,
+.settings-page select {
+  max-width: 320px;
+}
