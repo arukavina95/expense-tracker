@@ -85,39 +85,37 @@ useEffect(() => {
     [expenses]
   )
 
-  async function onSubmit(ev: FormEvent) {
-    ev.preventDefault()
-    const value = Number(amount)
+async function onSubmit(ev: FormEvent) {
+  ev.preventDefault()
 
-    if (!value || value <= 0) {
-      setError('Amount must be a positive number.')
-      return
-    }
+  const normalized = amount.replace(',', '.')
+  const value = Number(normalized)
 
-    try {
-      setError(null)
-      setSaving(true)
-
-      await addExpense({
-        amount: value,
-        category,
-        date: new Date(date).toISOString(),
-        note: note.trim() ? note.trim() : undefined,
-      })
-
-      // reset inputs
-      setAmount('')
-      setNote('')
-
-      // refresh list from DB (simple + reliable)
-      await load()
-    } catch (e: any) {
-      console.error(e)
-      setError(e?.message ?? 'Failed to add expense')
-    } finally {
-      setSaving(false)
-    }
+  if (!value || value <= 0) {
+    setError('Amount must be a positive number.')
+    return
   }
+
+  try {
+    setError(null)
+    setSaving(true)
+
+    await addExpense({
+      amount: value,
+      category,
+      date: new Date(date).toISOString(),
+      note: note.trim() ? note.trim() : undefined,
+    })
+
+    setAmount('')
+    setNote('')
+    await load()
+  } catch (e: any) {
+    setError(e?.message ?? 'Failed to add expense')
+  } finally {
+    setSaving(false)
+  }
+}
 
   async function onDelete(id: string) {
     try {
@@ -155,9 +153,10 @@ useEffect(() => {
           <input
             placeholder="Amount"
             inputMode="decimal"
+            pattern="[0-9.,]*"
             value={amount}
             onChange={e => setAmount(e.target.value)}
-          />
+            />
 
           <select value={category} onChange={e => setCategory(e.target.value)}>
             {categories.map(c => (
