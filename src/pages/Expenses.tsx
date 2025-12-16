@@ -8,6 +8,7 @@ import {
 
 const categories = [
   'Piće i hrana',
+  'Bankomat',
   'Prijevoz (auto)',
   'Stan',
   'Gluposti',
