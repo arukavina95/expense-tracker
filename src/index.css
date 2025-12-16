@@ -231,6 +231,19 @@ input::placeholder {
   color: var(--muted);
 }
 
+/* Select dropdown options - Dark theme */
+select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 12px;
+}
+
+select option:hover,
+select option:checked {
+  background: var(--accent-soft);
+  color: var(--text-primary);
+}
+
 /* ================================
    FIELD LABELS
    ================================ */
