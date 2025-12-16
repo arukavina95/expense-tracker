@@ -135,132 +135,208 @@ export default function Expenses() {
      RENDER
      ========================= */
   return (
-    <div className="page">
-      {/* ADD */}
-      <div className="card-panel">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            gap: 12,
-          }}
-        >
-          <h3>Add expense</h3>
-          <span className="muted">Total: €{total.toFixed(2)}</span>
+    <div className="container">
+      <div className="page">
+        {/* Header */}
+        <div style={{ marginBottom: 8 }}>
+          <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
+            Expenses
+          </h1>
+          <p className="muted">Manage and track all your expenses</p>
         </div>
 
-        {error && (
-          <div className="muted" style={{ marginTop: 8 }}>
-            {error}
-          </div>
-        )}
-
-        <form
-          className="expense-form"
-          onSubmit={onSubmit}
-          style={{ marginTop: 12 }}
-        >
-          <input
-            placeholder="Amount"
-            inputMode="decimal"
-            pattern="[0-9.,]*"
-            value={amount}
-            onChange={e => setAmount(e.target.value)}
-          />
-
-          <select value={category} onChange={e => setCategory(e.target.value)}>
-            {categories.map(c => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-
-          <input
-            type="date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-          />
-
-          <input
-            placeholder="Note"
-            value={note}
-            onChange={e => setNote(e.target.value)}
-          />
-
-          <button type="submit" disabled={saving}>
-            {saving ? 'Saving…' : 'Add'}
-          </button>
-
-          <button
-            type="button"
-            className="secondary"
-            onClick={load}
-            disabled={loading || saving}
-          >
-            Refresh
-          </button>
-        </form>
-      </div>
-
-      {/* LIST */}
-      <div className="section">
-        <div className="card-panel recent-card">
+        {/* ADD EXPENSE FORM */}
+        <div className="card-panel">
           <div
             style={{
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'baseline',
+              alignItems: 'center',
+              marginBottom: 20,
             }}
           >
-            <h3>All expenses</h3>
-            <span className="muted">
-              {loading ? 'Loading…' : `${expenses.length} items`}
-            </span>
+            <div>
+              <h3 style={{ marginBottom: 4 }}>➕ Add new expense</h3>
+              <p className="muted" style={{ fontSize: '0.875rem' }}>
+                Quick entry for tracking your spending
+              </p>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: 4 }}>
+                TOTAL
+              </div>
+              <div style={{ 
+                fontSize: '1.5rem', 
+                fontWeight: 900,
+                background: 'var(--gradient-primary)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}>
+                €{total.toFixed(2)}
+              </div>
+            </div>
           </div>
 
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Amount</th>
-                  <th>Category</th>
-                  <th>Date</th>
-                  <th>Note</th>
-                  <th />
-                </tr>
-              </thead>
+          {error && (
+            <div style={{ 
+              padding: '12px 16px', 
+              background: 'var(--danger-soft)', 
+              color: 'var(--danger)',
+              borderRadius: 'var(--radius)',
+              marginBottom: 16,
+              fontSize: '0.875rem',
+              fontWeight: 600
+            }}>
+              ⚠️ {error}
+            </div>
+          )}
 
-              <tbody>
-                {!loading && expenses.length === 0 && (
+          <form className="expense-form" onSubmit={onSubmit}>
+            <input
+              placeholder="Amount (€)"
+              inputMode="decimal"
+              pattern="[0-9.,]*"
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
+              required
+              style={{ fontWeight: 600 }}
+            />
+
+            <select value={category} onChange={e => setCategory(e.target.value)}>
+              {categories.map(c => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="date"
+              value={date}
+              onChange={e => setDate(e.target.value)}
+              required
+            />
+
+            <input
+              placeholder="Note (optional)"
+              value={note}
+              onChange={e => setNote(e.target.value)}
+            />
+
+            <button type="submit" disabled={saving}>
+              {saving ? '💫 Saving…' : '✅ Add'}
+            </button>
+
+            <button
+              type="button"
+              className="secondary"
+              onClick={load}
+              disabled={loading || saving}
+              title="Refresh list"
+            >
+              🔄 Refresh
+            </button>
+          </form>
+        </div>
+
+        {/* ALL EXPENSES LIST */}
+        <div className="section">
+          <div className="card-panel recent-card">
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 8,
+              }}
+            >
+              <div>
+                <h3 style={{ marginBottom: 4 }}>📋 All expenses</h3>
+                <p className="muted" style={{ fontSize: '0.875rem' }}>
+                  Complete transaction history
+                </p>
+              </div>
+              <span style={{
+                padding: '6px 14px',
+                background: 'var(--accent-soft)',
+                color: 'var(--accent)',
+                borderRadius: '12px',
+                fontSize: '0.875rem',
+                fontWeight: 700
+              }}>
+                {loading ? 'Loading…' : `${expenses.length} item${expenses.length !== 1 ? 's' : ''}`}
+              </span>
+            </div>
+
+            <div className="table-wrap">
+              <table>
+                <thead>
                   <tr>
-                    <td colSpan={5} className="muted">
-                      No expenses yet
-                    </td>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Note</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
-                )}
+                </thead>
 
-                {expenses.map(e => (
-                  <tr key={e.id}>
-                    <td className="amount">€{e.amount.toFixed(2)}</td>
-                    <td>{e.category}</td>
-                    <td>{new Date(e.date).toLocaleDateString()}</td>
-                    <td>{e.note ?? '—'}</td>
-                    <td className="actions">
-                      <button
-                        className="icon-btn"
-                        type="button"
-                        onClick={() => onDelete(e.id)}
-                        title="Delete"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                <tbody>
+                  {!loading && expenses.length === 0 && (
+                    <tr>
+                      <td colSpan={5} style={{ textAlign: 'center', padding: '60px 20px' }}>
+                        <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎯</div>
+                        <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+                          No expenses yet
+                        </div>
+                        <div className="muted">
+                          Add your first expense using the form above
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+
+                  {expenses.map(e => (
+                    <tr key={e.id}>
+                      <td className="amount">€{e.amount.toFixed(2)}</td>
+                      <td>
+                        <span style={{ 
+                          padding: '6px 12px', 
+                          borderRadius: '10px', 
+                          background: 'var(--accent-soft)',
+                          color: 'var(--accent)',
+                          fontSize: '0.875rem',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {e.category}
+                        </span>
+                      </td>
+                      <td style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>
+                        {new Date(e.date).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </td>
+                      <td style={{ color: 'var(--muted)', maxWidth: '300px' }}>
+                        {e.note || '—'}
+                      </td>
+                      <td className="actions">
+                        <button
+                          className="icon-btn"
+                          type="button"
+                          onClick={() => onDelete(e.id)}
+                          title="Delete expense"
+                        >
+                          ✕
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

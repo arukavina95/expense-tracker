@@ -1,34 +1,322 @@
 /* ================================
-   DESIGN SYSTEM – EXPENSE APP
+   MODERN DESIGN SYSTEM – EXPENSE APP
    ================================ */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 :root {
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system,
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, "Helvetica Neue", Arial;
 
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --border: #e5e7eb;
+  /* Modern Color Palette */
+  --bg: #0f0f1e;
+  --bg-secondary: #1a1a2e;
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-hover: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.1);
 
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --muted: #64748b;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b8;
+  --muted: #6b6b8a;
 
-  --accent: #4f46e5;
-  --accent-600: #4338ca;
-  --accent-soft: #eef2ff;
+  /* Accent Colors - Vibrant Purple/Blue */
+  --accent: #6366f1;
+  --accent-600: #4f46e5;
+  --accent-700: #4338ca;
+  --accent-soft: rgba(99, 102, 241, 0.15);
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  
+  /* Semantic Colors */
+  --success: #10b981;
+  --success-soft: rgba(16, 185, 129, 0.15);
+  --warning: #f59e0b;
+  --warning-soft: rgba(245, 158, 11, 0.15);
+  --danger: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.15);
 
-  --radius: 14px;
-  --shadow-1: 0 10px 25px rgba(15, 23, 42, 0.06);
-  --shadow-2: 0 4px 10px rgba(15, 23, 42, 0.04);
+  /* Spacing & Layout */
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  
+  /* Shadows - Enhanced */
+  --shadow-1: 0 20px 60px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 8px 30px rgba(0, 0, 0, 0.2);
+  --shadow-3: 0 4px 20px rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.4);
+  
+  /* Animations */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 
   font-family: var(--font-sans);
   background: var(--bg);
   color: var(--text-primary);
 }
 
+/* ================================
+   RESET & BASE
+   ================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
   background: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Animated Background Pattern */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+h1 { font-size: 2.5rem; font-weight: 900; }
+h2 { font-size: 1.875rem; font-weight: 800; }
+h3 { font-size: 1.5rem; font-weight: 700; }
+
+/* ================================
+   TYPOGRAPHY
+   ================================ */
+
+.muted {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ================================
+   BUTTONS - Modern & Interactive
+   ================================ */
+
+button {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.938rem;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary Button */
+button.primary,
+button[type="submit"] {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+button.primary:hover:not(:disabled),
+button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
+}
+
+button.primary:active:not(:disabled),
+button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Secondary Button */
+button.secondary {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+
+button.secondary:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* Icon Button */
+button.icon-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 1.2rem;
+  border-radius: 10px;
+}
+
+button.icon-btn:hover:not(:disabled) {
+  background: var(--danger);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ================================
+   INPUTS - Modern Glass Style
+   ================================ */
+
+input,
+select,
+textarea {
+  font-family: var(--font-sans);
+  font-size: 0.938rem;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  transition: all var(--transition-base);
+  backdrop-filter: blur(10px);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+input::placeholder {
+  color: var(--muted);
+}
+
+/* ================================
+   FIELD LABELS
+   ================================ */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+/* ================================
+   ACCESSIBILITY
+   ================================ */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ================================
+   SCROLLBAR - Custom Dark
+   ================================ */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-hover);
+}
+
+/* ================================
+   LOADING ANIMATION
+   ================================ */
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.loading {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 0%,
+    var(--surface-hover) 50%,
+    var(--surface) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ================================
+   MOBILE OPTIMIZATIONS
+   ================================ */
+
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 0.875rem;
+  }
 }

@@ -102,98 +102,155 @@ export default function Dashboard() {
      RENDER
      ========================= */
   return (
-    <div className="page">
-      <section className="summary-grid">
-        <div className="card-panel">
-          <div className="summary-title">Total this month</div>
-          <div className="summary-value">€{totalMonth.toFixed(2)}</div>
+    <div className="container">
+      <div className="page">
+        {/* Header */}
+        <div style={{ marginBottom: 8 }}>
+          <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>
+            Dashboard
+          </h1>
+          <p className="muted">Track your spending and stay on budget</p>
         </div>
 
-        <div className="card-panel">
-          <div className="summary-title">Today</div>
-          <div className="summary-value">€{todayTotal.toFixed(2)}</div>
-        </div>
-
-        <div className="card-panel">
-          <div className="summary-title">Avg / day</div>
-          <div className="summary-value">€{avgPerDay.toFixed(2)}</div>
-        </div>
-
-        <div className="card-panel">
-          <div className="summary-title">Monthly budget</div>
-
-          {!budget && <div className="muted">Not set</div>}
-
-          {budget && (
-            <>
-              <div className="summary-value">
-                €{totalMonth.toFixed(0)} / €{budget.toFixed(0)}
-              </div>
-
-              <div className="budget-bar">
-                <div
-                  className={`budget-fill ${
-                    percent! >= 90
-                      ? 'danger'
-                      : percent! >= 75
-                      ? 'warn'
-                      : ''
-                  }`}
-                  style={{ width: `${percent}%` }}
-                />
-              </div>
-
-              <div className="muted">{percent}% used</div>
-            </>
-          )}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="card-panel chart-card">
-          <div className="chart-title">
-            Daily spending (this month)
+        {/* Summary Cards */}
+        <section className="summary-grid">
+          <div className="card-panel">
+            <div className="summary-title">💰 Total this month</div>
+            <div className="summary-value">€{totalMonth.toFixed(2)}</div>
+            <div className="summary-subtitle">
+              {monthlyExpenses.length} transaction{monthlyExpenses.length !== 1 ? 's' : ''}
+            </div>
           </div>
-          <div className="chart-wrap" />
-        </div>
-      </section>
 
-      <section className="section">
-        <div className="card-panel recent-card">
-          <h3>Recent expenses</h3>
+          <div className="card-panel">
+            <div className="summary-title">📅 Today</div>
+            <div className="summary-value">€{todayTotal.toFixed(2)}</div>
+            <div className="summary-subtitle">
+              {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
+            </div>
+          </div>
 
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Amount</th>
-                  <th>Category</th>
-                  <th>Date</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {expenses.slice(0, 5).map(e => (
-                  <tr key={e.id}>
-                    <td className="amount">€{e.amount.toFixed(2)}</td>
-                    <td>{e.category}</td>
-                    <td>{new Date(e.date).toLocaleDateString()}</td>
-                    <td>{e.note || '—'}</td>
-                  </tr>
-                ))}
+          <div className="card-panel">
+            <div className="summary-title">📊 Avg / day</div>
+            <div className="summary-value">€{avgPerDay.toFixed(2)}</div>
+            <div className="summary-subtitle">
+              Based on {todayDay} day{todayDay !== 1 ? 's' : ''}
+            </div>
+          </div>
 
-                {expenses.length === 0 && (
+          <div className="card-panel">
+            <div className="summary-title">🎯 Monthly budget</div>
+
+            {!budget && (
+              <>
+                <div className="summary-value" style={{ fontSize: '1.5rem' }}>
+                  Not set
+                </div>
+                <div className="muted">Set budget in Settings</div>
+              </>
+            )}
+
+            {budget && (
+              <>
+                <div className="summary-value" style={{ fontSize: '1.5rem' }}>
+                  €{totalMonth.toFixed(0)} / €{budget.toFixed(0)}
+                </div>
+
+                <div className="budget-bar">
+                  <div
+                    className={`budget-fill ${
+                      percent! >= 90
+                        ? 'danger'
+                        : percent! >= 75
+                        ? 'warn'
+                        : ''
+                    }`}
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+
+                <div className="muted" style={{ fontWeight: 600 }}>
+                  {percent}% used • €{(budget - totalMonth).toFixed(0)} remaining
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* Chart Section */}
+        <section className="section">
+          <div className="card-panel chart-card">
+            <div className="chart-title">
+              Daily spending trends
+            </div>
+            <div className="chart-wrap">
+              Chart visualization coming soon
+            </div>
+          </div>
+        </section>
+
+        {/* Recent Expenses Table */}
+        <section className="section">
+          <div className="card-panel recent-card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+              <h3>Recent expenses</h3>
+              <span className="muted">Last 5 transactions</span>
+            </div>
+
+            <div className="table-wrap">
+              <table>
+                <thead>
                   <tr>
-                    <td colSpan={4} className="muted">
-                      No expenses yet
-                    </td>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Note</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {expenses.slice(0, 5).map(e => (
+                    <tr key={e.id}>
+                      <td className="amount">€{e.amount.toFixed(2)}</td>
+                      <td>
+                        <span style={{ 
+                          padding: '4px 12px', 
+                          borderRadius: '8px', 
+                          background: 'var(--accent-soft)',
+                          color: 'var(--accent)',
+                          fontSize: '0.875rem',
+                          fontWeight: 600
+                        }}>
+                          {e.category}
+                        </span>
+                      </td>
+                      <td style={{ color: 'var(--text-secondary)' }}>
+                        {new Date(e.date).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </td>
+                      <td style={{ color: 'var(--muted)' }}>{e.note || '—'}</td>
+                    </tr>
+                  ))}
+
+                  {expenses.length === 0 && (
+                    <tr>
+                      <td colSpan={4} style={{ textAlign: 'center', padding: '40px', color: 'var(--muted)' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '16px' }}>💸</div>
+                        <div style={{ fontSize: '1.125rem', fontWeight: 600 }}>No expenses yet</div>
+                        <div style={{ fontSize: '0.875rem', marginTop: '8px' }}>
+                          Start tracking by adding your first expense
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }
