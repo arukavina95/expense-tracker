@@ -1,75 +1,86 @@
-const CACHE_NAME = 'expense-tracker-v3' // Povećaj verziju kada se update-uje
-const DYNAMIC_CACHE = 'expense-tracker-dynamic-v3'
+const CACHE_NAME = 'expense-tracker-v4'
+const DYNAMIC_CACHE = 'expense-tracker-dynamic-v4'
 
 const STATIC_ASSETS = [
   '/',
-  '/manifest.webmanifest'
+  '/index.html',
+  '/manifest.webmanifest',
+  '/icon-192.png',
+  '/icon-512.png',
 ]
 
+// INSTALL
 self.addEventListener('install', event => {
   console.log('[SW] Installing...')
+  self.skipWaiting()
+
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
   )
-  self.skipWaiting() // Odmah aktiviraj novi SW
 })
 
+// ACTIVATE
 self.addEventListener('activate', event => {
   console.log('[SW] Activating...')
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys.filter(k => k !== CACHE_NAME && k !== DYNAMIC_CACHE).map(k => {
-          console.log('[SW] Deleting old cache:', k)
-          return caches.delete(k)
-        })
+        keys
+          .filter(k => k !== CACHE_NAME && k !== DYNAMIC_CACHE)
+          .map(k => {
+            console.log('[SW] Deleting old cache:', k)
+            return caches.delete(k)
+          })
       )
     )
   )
-  self.clients.claim() // Odmah preuzmi kontrolu
+  self.clients.claim()
 })
 
+// FETCH
 self.addEventListener('fetch', event => {
   const { request } = event
   const url = new URL(request.url)
 
-  // Network-first strategija za HTML i JS/CSS (UVEK SVJEŽA VERZIJA)
+  // 🚨 1. SAMO GET
+  if (request.method !== 'GET') {
+    return
+  }
+
+  // 🚨 2. SAMO ISTI ORIGIN (nikad Supabase, API, CDN…)
+  if (url.origin !== self.location.origin) {
+    return
+  }
+
+  // 🟢 HTML / JS / CSS → NETWORK FIRST (uvijek svježe)
   if (
     request.destination === 'document' ||
-    url.pathname.includes('.js') ||
-    url.pathname.includes('.css') ||
-    url.pathname === '/' ||
-    url.pathname === '/index.html'
+    request.destination === 'script' ||
+    request.destination === 'style'
   ) {
     event.respondWith(
       fetch(request)
         .then(response => {
-          // Keširaj novu verziju
-          const responseClone = response.clone()
+          const clone = response.clone()
           caches.open(DYNAMIC_CACHE).then(cache => {
-            cache.put(request, responseClone)
+            cache.put(request, clone)
           })
           return response
         })
-        .catch(() => {
-          // Ako nema interneta, vrati keširanu verziju
-          return caches.match(request)
-        })
+        .catch(() => caches.match(request))
     )
     return
   }
 
-  // Cache-first strategija za slike i ostale statične resurse
+  // 🟢 Ostali statični resursi → CACHE FIRST
   event.respondWith(
     caches.match(request).then(cached => {
-      if (cached) {
-        return cached
-      }
+      if (cached) return cached
+
       return fetch(request).then(response => {
-        // Keširaj za budućnost
-        const responseClone = response.clone()
+        const clone = response.clone()
         caches.open(DYNAMIC_CACHE).then(cache => {
-          cache.put(request, responseClone)
+          cache.put(request, clone)
         })
         return response
       })
