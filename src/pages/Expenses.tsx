@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
-
 import {
   addExpense,
   deleteExpense,
@@ -9,12 +8,12 @@ import {
 } from '../data/expenses'
 
 const categories = [
-  'Pice i hrana',
-  'Prijevoz(auto)',
+  'Piće i hrana',
+  'Prijevoz (auto)',
   'Stan',
   'Gluposti',
   'Cigare',
-  'Ostalo'
+  'Ostalo',
 ]
 
 export default function Expenses() {
@@ -23,15 +22,16 @@ export default function Expenses() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // form state
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState(categories[0])
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [note, setNote] = useState('')
 
+  /* =========================
+     LOAD + REALTIME
+     ========================= */
   async function load() {
     try {
-      setError(null)
       setLoading(true)
       const data = await getExpenses()
       setExpenses(data)
@@ -43,126 +43,116 @@ export default function Expenses() {
     }
   }
 
-useEffect(() => {
-  let mounted = true
+  useEffect(() => {
+    let mounted = true
 
-  const load = async () => {
-    try {
-      const data = await getExpenses()
-      if (mounted) setExpenses(data)
-    } catch (e) {
-      console.error(e)
-      setError('Failed to load expenses')
-    } finally {
-      if (mounted) setLoading(false)
+    const init = async () => {
+      if (!mounted) return
+      await load()
     }
-  }
 
-  load()
+    init()
 
-  const channel = supabase
-    .channel('expenses-page')
-    .on(
-      'postgres_changes',
-      {
-        event: '*',
-        schema: 'public',
-        table: 'expenses',
-      },
-      load
-    )
-    .subscribe()
+    const channel = supabase
+      .channel('expenses-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'expenses' },
+        () => load()
+      )
+      .subscribe()
 
-  return () => {
-    mounted = false
-    supabase.removeChannel(channel)
-  }
-}, [])
+    return () => {
+      mounted = false
+      supabase.removeChannel(channel)
+    }
+  }, [])
 
-
+  /* =========================
+     TOTAL
+     ========================= */
   const total = useMemo(
     () => expenses.reduce((s, e) => s + e.amount, 0),
     [expenses]
   )
 
-async function onSubmit(ev: FormEvent) {
-  ev.preventDefault()
+  /* =========================
+     ADD
+     ========================= */
+  async function onSubmit(ev: FormEvent) {
+    ev.preventDefault()
 
-  const normalized = amount.replace(',', '.')
-  const value = Number(normalized)
+    const normalized = amount.replace(',', '.')
+    const value = Number(normalized)
 
-  if (!value || value <= 0) {
-    setError('Amount must be a positive number.')
-    return
-  }
+    if (isNaN(value) || value <= 0) {
+      setError('Amount must be a positive number.')
+      return
+    }
 
-  try {
-    setError(null)
-    setSaving(true)
-
-    await addExpense({
-      amount: value,
-      category,
-      date: new Date(date).toISOString(),
-      note: note.trim() ? note.trim() : undefined,
-    })
-
-    setAmount('')
-    setNote('')
-    await load()
-  } catch (e: any) {
-    setError(e?.message ?? 'Failed to add expense')
-  } finally {
-    setSaving(false)
-  }
-}
-
-  async function onDelete(id: string) {
     try {
+      setSaving(true)
       setError(null)
 
-      // optimistic remove
-      const prev = expenses
-      setExpenses(prev.filter(e => e.id !== id))
+      await addExpense({
+        amount: value,
+        category,
+        date: new Date(date).toISOString(),
+        note: note.trim() || undefined,
+      })
 
-      await deleteExpense(id)
+      setAmount('')
+      setNote('')
     } catch (e: any) {
       console.error(e)
-      setError(e?.message ?? 'Failed to delete expense')
-      // rollback optimistic change
-      await load()
+      setError(e?.message ?? 'Failed to add expense')
+    } finally {
+      setSaving(false)
     }
   }
 
+  /* =========================
+     DELETE
+     ========================= */
+  async function onDelete(id: string) {
+    const prev = expenses
+    setExpenses(prev.filter(e => e.id !== id))
+
+    try {
+      await deleteExpense(id)
+    } catch (e: any) {
+      console.error(e)
+      setError('Failed to delete expense')
+      setExpenses(prev) // rollback
+    }
+  }
+
+  /* =========================
+     RENDER
+     ========================= */
   return (
     <div className="page">
       {/* ADD */}
       <div className="card-panel">
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'baseline' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <h3>Add expense</h3>
-          <div className="muted">Total: €{total.toFixed(2)}</div>
+          <span className="muted">Total: €{total.toFixed(2)}</span>
         </div>
 
-        {error && (
-          <div className="muted" style={{ marginTop: 10 }}>
-            {error}
-          </div>
-        )}
+        {error && <div className="muted" style={{ marginTop: 8 }}>{error}</div>}
 
-        <form className="expense-form" onSubmit={onSubmit} style={{ marginTop: 12 }}>
+        <form className="expense-form" onSubmit={onSubmit}>
           <input
             placeholder="Amount"
             inputMode="decimal"
             pattern="[0-9.,]*"
             value={amount}
             onChange={e => setAmount(e.target.value)}
-            />
+          />
 
           <select value={category} onChange={e => setCategory(e.target.value)}>
             {categories.map(c => (
-              <option key={c} value={c}>
-                {c}
-              </option>
+              <option key={c}>{c}</option>
             ))}
           </select>
 
@@ -177,20 +167,13 @@ async function onSubmit(ev: FormEvent) {
           <button type="submit" disabled={saving}>
             {saving ? 'Saving…' : 'Add'}
           </button>
-
-          <button type="button" className="secondary" onClick={load} disabled={loading || saving}>
-            Refresh
-          </button>
         </form>
       </div>
 
       {/* LIST */}
       <div className="section">
         <div className="card-panel recent-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-            <h3>All expenses</h3>
-            <span className="muted">{loading ? 'Loading…' : `${expenses.length} items`}</span>
-          </div>
+          <h3>All expenses</h3>
 
           <div className="table-wrap">
             <table>
@@ -218,13 +201,12 @@ async function onSubmit(ev: FormEvent) {
                     <td className="amount">€{e.amount.toFixed(2)}</td>
                     <td>{e.category}</td>
                     <td>{new Date(e.date).toLocaleDateString()}</td>
-                    <td>{e.note ?? '—'}</td>
+                    <td>{e.note || '—'}</td>
                     <td className="actions">
                       <button
                         className="icon-btn"
                         type="button"
                         onClick={() => onDelete(e.id)}
-                        title="Delete"
                       >
                         ✕
                       </button>
@@ -234,7 +216,6 @@ async function onSubmit(ev: FormEvent) {
               </tbody>
             </table>
           </div>
-
         </div>
       </div>
     </div>

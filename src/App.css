@@ -383,3 +383,76 @@
 .settings-page select {
   max-width: 320px;
 }
+@media (max-width: 640px) {
+  .recent-card table {
+    display: none;
+  }
+
+  .expense-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .expense-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: var(--shadow-1);
+  }
+
+  .expense-card .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+  }
+
+  .expense-card .amount {
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+}
+/* ==============================
+   MOBILE UX FIXES
+   ============================== */
+
+@media (max-width: 640px) {
+  .expense-form {
+    flex-direction: column;
+  }
+
+  .expense-form input,
+  .expense-form select,
+  .expense-form button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+  }
+
+  .recent-card table {
+    display: none;
+  }
+
+  .expense-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .expense-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: var(--shadow-1);
+  }
+
+  .expense-card .row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .expense-card .amount {
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+}
