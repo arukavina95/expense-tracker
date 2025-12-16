@@ -27,8 +27,8 @@ export default function Login({ onLogin, onSwitchToRegister }: Props) {
       <div className="auth-hero">
         <div className="hero-inner">
           <div className="hero-tag">Expense</div>
-          <h1>Welcome to yours</h1>
-          <p className="muted">Securely sign in to view your expenses and analytics.</p>
+          <h1>Welcome  👋</h1>
+          <p className="muted">Let’s see where your money went this month.</p>
         </div>
       </div>
 
