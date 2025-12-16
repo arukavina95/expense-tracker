@@ -35,7 +35,7 @@ export const Navbar: FC<{
         </nav>
 
         <div className="nav-actions">
-          <button className="ghost" onClick={signOut}>
+          <button onClick={signOut}>
             Log out
           </button>
         </div>
